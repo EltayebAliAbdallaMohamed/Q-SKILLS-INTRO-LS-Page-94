@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q SKILLS INTRO LS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding-bottom: 60px; /* Space for the fixed controls */
+        }
+        .arabic {
+            direction: rtl;
+            text-align: right;
+            font-size: large;
+            font-weight: 700;
+            color: green;
+        }
+        .slide {
+            border: 1px solid #ccc;
+            padding: 10px; /* Reduced padding */
+            margin: 20px; /* Margin around the slide */
+            margin-bottom: 0; /* No margin at the bottom to minimize gap */
+        }
+        img {
+            width: 200px;
+            height: auto;
+        }
+        p{
+        width: 86%;
+            font-size: large;
+            font-weight: 700;
+        }
+        .controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background: white; /* Background color for the fixed controls */
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        input[type="number"] {
+            padding: 5px;
+            width: 80px;
+        }
+        h3{
+            
+            margin-left: 20px;
+            text-align: left;
+            color: blue;
+        }
+        button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .objective {
+            color: blue;
+            font-size: large;
+        }
+        .keyWord{
+            color: red;
+            font-size: large;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h3>Use information and ideas from the audio to decribe a home. <br> Give a presentation.</h3>
+    <div class="slide"></div>
+    
+    <audio id="audioPlayer" controls></audio> <!-- Static audio player -->
+    
+    <div class="controls">
+        <button onclick="previousSlide()">
+            <img src="backward.png" alt="Next" style="width: 20px; height: 20px;" />
+        </button>
+        <button onclick="nextSlide()">
+            <img src="forward.png" alt="Next" style="width: 20px; height: 20px;" />
+        </button>
+        <input type="number" id="slideInput" min="1" max="4" placeholder="Slide " />
+        <button onclick="goToSlide()">Go</button>
+    </div>
+
+    <script>
+        let utterance= new SpeechSynthesisUtterance();
+        const Items = [
+            {
+                audio: "Q3eSE_LS0_U05_09_ConsidertheIdeas.mp3",
+                English: "Q3eSE_LS0_U05_09_ConsidertheIdeas.",          
+                
+                Question:"Describe your home.",             
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "What is the unit question.mp3",
+                English: "What is the unit question?",
+                Arabic:"ما هو سؤال الوحدة؟",
+                keyWord:"unit question",
+                Question:"What is the unit question?"
+
+            },
+            {
+                audio: "What makes a good home.mp3",
+                English: "What makes a good home?",
+                Arabic:"ما الذي يجعل منزلًا جيدًا؟",
+                keyWord:"good home",
+                Question:"What makes a good home?"
+
+            },
+            {
+                audio: "What is the inside of your house like.mp3",
+                English: "What is the inside of your house like?",
+                Arabic:"ما هو داخل منزلك؟",
+                keyWord:"inside",
+                Question:"What is the inside of your house like?"
+
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "How many bedrooms do you have.mp3",
+                English: "How many bedrooms do you have?",
+                Arabic:"كم غرفة نوم لديك؟",
+                keyWord:"bedrooms",
+                Question:"How many bedrooms do you have?"
+
+            },
+            {
+                audio:"We have two bedrooms.mp3",
+                English:"We have two bedrooms.",
+                Arabic:"لدينا غرفتان نوم",
+                keyWord:"bedrooms",
+
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio:"How many bathrooms do you have.mp3",
+                English:"How many bathrooms do you have?",
+                Arabic:"كم حمام لديك؟",
+                keyWord:"bathrooms",
+                Question:"How many bathrooms do you have?"
+
+            },
+            {
+                audio:"We have one bathroom.mp3",
+                English:"We have one bathroon.",    
+                Arabic:"لدينا حمام واحد",
+                keyWord:"bathrooms",
+
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio:"Do you have a big kitchen or a small kitchen.mp3",
+                English:"Do you have a big kitchen or a small kitchen?",
+                Arabic:"هل لديك مطبخ كبير أم صغير؟",
+                keyWord:"kitchen",
+                Question:"Do you have a big kitchen or a small kitchen?"
+
+            },
+            {
+                audio:"We have a big kitchen.mp3",
+                English:"We have a big kitchen.",   
+                Arabic:"لدينا مطبخ كبير",
+                keyWord:"kitchen",
+
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "Do you have a big living room or a small living room.mp3",
+                English: "Do you have a big living room or a small living room?",
+                Arabic:"هل لديك غرفة معيشة كبيرة أم صغيرة؟",         
+                keyWord:"living room",   
+                Question:"Do you have a big living room or a small living room?"
+                        
+            },
+            {
+                audio: "We have a big living room.mp3",
+                English: "We have a big living room.",
+                Arabic:"لدينا غرفة معيشة كبيرة",
+                keyWord:"living room",
+
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "What do you have in your living room.mp3",
+                English: "What do you have in your living room?",    
+                Arabic:"ماذا لديك في غرفة المعيشة؟",
+                keyWord:"living room",  
+                Question:"What do you have in your living room?"       
+                        
+            },
+            {
+                audio: "We have comfortable chairs and sofas in the living room.mp3",
+                English: "We have comfortable chairs and sofas in the living room.",
+                Arabic:"لدينا كراسي وأرائك مريحة في غرفة المعيشة",
+                keyWord:"chairs, sofas",
+
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "Do you have comfortable chairs and sofas in your living room.mp3",
+                English: "Do you have comfortable chairs and sofas in your living room?",   
+                Arabic:"هل لديك كراسي وأرائك مريحة في غرفة المعيشة؟",
+                keyWord:"chairs, sofas",
+
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "Do you have a swimming pool.mp3",
+                English: "Do you have a swimming pool?",
+                Arabic: "هل لديك حمام سباحة؟",
+                keyWord: "swimming pool",
+                Question:"Do you have a swimming pool?"
+                
+
+            },
+            {
+                audio: "We have a swimming pool.mp3",
+                English: "We have a swimming pool.",
+                Arabic: "لدينا حمام سباحة",
+                keyWord: "swimming pool",
+
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "Do you have a garden.mp3",
+                English: "Do you have a garden?",
+                Question:"Do you have a garden?",},
+            {
+                audio: "We have a garden.mp3",
+                English: "We have a garden.",   
+                Arabic: "لدينا حديقة",
+                keyWord: "garden",
+
+            },
+            {
+                audio: "Do you have big windows or small windows.mp3",
+                English: "Do you have big windows or small windows?",
+                Arabic: "هل لديك نوافذ كبيرة أم صغيرة؟",
+                keyWord: "windows",
+                Question:"Do you have big windows or small windows?"
+
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "Good afternoon.mp3",
+                English: "Good afternoon.",
+                Arabic: "مساء الخير",
+                keyWord: "afternoon",         
+                 
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "This is our presentation about a good home.mp3",
+                English: "This is our presentation about a good home.",
+                Arabic:"هذا عرضنا عن منزل جيد",
+                keyWord:"presentation",
+         
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "Inside the house.mp3",
+                English: "Inside the house.",
+                Arabic:"داخل المنزل",
+                keyWord:"Inside",
+         
+                        
+            },
+            {
+                audio: "How many bedrooms and bathrooms do you have.mp3",
+                English: "How many bedrooms and bathrooms do you have?",
+                Arabic:"كم غرفة نوم وحمام لديك؟",
+                keyWord:"bedrooms, bathrooms",
+                Question:"How many bedrooms and bathrooms do you have?"
+
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "there are four bedrooms and three bathrooms.mp3",
+                English: "There are four bedrooms and three bathrooms.",
+                Arabic:"هناك أربع غرف نوم وثلاث حمامات",
+                keyWord:"bedrooms, bathrooms",
+         
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "there are four bedrooms.mp3",
+                English: "there are four bedrooms.",
+                Arabic:"هناك أربع غرف نوم",
+                keyWord:"bedrooms",
+         
+                        
+            },
+           
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "and three bathrooms.mp3",
+                English: "and three bathrooms.",
+                Arabic:"وثلاث حمامات",
+                keyWord:"bathrooms",
+         
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "and three bathrooms.mp3",
+                English: "and three bathrooms.",
+                Arabic:"وثلاث حمامات",
+                keyWord:"bathrooms",
+         
+                        
+            },
+           
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "there are four bedrooms and three bathrooms.mp3",
+                English: "there are four bedrooms and three bathrooms.",
+                Arabic:"هناك أربع غرف نوم وثلاث حمامات",
+         
+                        
+            },
+            {
+                audio: "What is in the living room.mp3",
+                English: "What is in the living room?",
+                Arabic:"ماذا في غرفة المعيشة؟",
+                keyWord:"living room",
+                Question:"What is in the living room?"
+
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "There is a really big living room with comfortable chairs and sofas.mp3",
+                English: "There is a really big living room with comfortable chairs and sofas.",
+                Arabic:"هناك غرفة معيشة كبيرة حقًا مع كراسي وأرائك مريحة",
+                keyWord:"living room, chairs, sofas",
+         
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "There is a really big living room.mp3",
+                English: "There is a really big living room.",
+                Arabic:"هناك غرفة معيشة كبيرة حقًا",
+                keyWord:"living room",
+         
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "with comfortable chairs and sofas.mp3",
+                English: "with comfortable chairs and sofas.",  
+                Arabic:"مع كراسي وأرائك مريحة",
+                keyWord:"chairs, sofas",      
+                        
+            },
+            {
+                audio: "What about the windows Are they big or small.mp3",
+                English: "What about the windows? Are they big or small?",
+                Arabic:"ماذا عن النوافذ؟ هل هي كبيرة أم صغيرة؟",
+                keyWord:"windows",
+                Question:"What about the windows? Are they big or small?"
+
+            },
+            {
+
+                Objective:"Objective: A student can describe his home.",
+                audio: "There are big windows in all the rooms.mp3",
+                English: "There are big windows in all the rooms.",   
+                Arabic:"هناك نوافذ كبيرة في جميع الغرف",
+                keyWord:"windows",     
+                        
+            },
+            // outside the house
+            {
+                audio: "What is the outside of your house like.mp3",
+                English: "What is the outside of your house like?",
+                Arabic:"ما هو خارج منزلك؟",
+                keyWord:"outside",
+                
+
+            },
+            {
+                
+                Objective:"Objective: A student can describe his home.",
+                audio: "Outside the house.mp3",
+                English: "Outside the house.", 
+                Arabic:"خارج المنزل",
+                keyWord:"Outside",       
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "we have a big backyard.mp3",
+                English: "we have a big backyard.",    
+                Arabic:"لدينا فناء كبير",
+                keyWord:"backyard",    
+                        
+            },
+            {
+                audio: "Do you have a big backyard or a small backyard.mp3",
+                English: "Do you have a big backyard or a small backyard?",
+                Arabic:"هل لديك فناء كبير أم صغير؟",
+                keyWord:"backyard",
+                Question:"Do you have a big backyard or a small backyard?"
+
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "Outside the house, we have a big backyard.mp3",
+                English: "Outside the house, we have a big backyard.", 
+                Arabic:"خارج المنزل لدينا فناء كبير",
+                keyWord:"Outside, backyard",       
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "Outside the house, we have a big backyard.mp3",
+                English: "Outside the house, we have a big backyard.", 
+                Arabic:"خارج المنزل لدينا فناء كبير",
+                keyWord:"Outside, backyard",       
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "There is a table with chairs.mp3",
+                English: "There is a table with chairs.",  
+                Arabic:"هناك طاولة مع كراسي",      
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "We have a lot of trees and flowers.mp3",
+                English: "We have a lot of trees and flowers.",  
+                Arabic:"لدينا الكثير من الأشجار والزهور",
+                keyWord:"trees, flowers",     
+                Question:"What do you have in your backyard?" 
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "We also have a swimming pool.mp3",
+                English: "We also have a swimming pool.", 
+                Arabic:"لدينا أيضًا حمام سباحة",   
+                keyWord:"swimming pool",  
+                Question:"What else do you have in your backyard?"  
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "It’s very relaxing in our backyard.mp3",
+                English: "It’s very relaxing in our backyard.", 
+                Arabic:"إنه مريح جدًا في فنائنا الخلفي",
+                keyWord:"relaxing",       
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "We have a very nice neighborhood.mp3",
+                English: "We have a very nice neighborhood.",   
+                Arabic:"لدينا حي جميل جدًا",
+                keyWord:"neighborhood",
+                Question:"What is your neighborhood like?"    
+                    
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "The house is in a good location.mp3",
+                English: "The house is in a good location.",   
+                Arabic:"المنزل في موقع جيد",
+                keyWord:"location",    
+                Question:"What  about the location?" 
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "It is across the street from a beautiful park with a lot of trees.mp3",
+                English: "It is across the street from a beautiful park with a lot of trees.", 
+                Arabic:"إنه عبر الشارع من حديقة جميلة بها الكثير من الأشجار",
+                keyWord:"park, trees",
+                Question:"What is across the street from the house?"       
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "It is across the street.mp3",
+                English: "It is across the street",  
+                Arabic:"إنه عبر الشارع",      
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "from a beautiful park.mp3",
+                English: "from a beautiful park", 
+                Arabic:"من حديقة جميلة",       
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "with a lot of trees.mp3",
+                English: "with a lot of trees.",  
+                Arabic:"بها الكثير من الأشجار",
+                keyWord:"trees",  
+                Question:"What is in the park?"    
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "It is across the street from a beautiful park with a lot of trees.mp3",
+                English: "It is across the street from a beautiful park with a lot of trees.", 
+                Arabic:"إنه عبر الشارع من حديقة جميلة بها الكثير من الأشجار",
+                keyWord:"park, trees", 
+                Question:"What is across the street from the house?"      
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "It’s near public transportation and the supermarket.mp3",
+                English: "It’s near public transportation and the supermarket.",  
+                Arabic:"إنه بالقرب من وسائل النقل العامة والسوبر ماركت",
+                keyWord:"public transportation, supermarket",
+                Question:"What is near the house?"
+
+                        
+            },
+           
+            {
+                Objective:"Objective: A student can describe his home.",
+            audio:"It’s near public transportation.mp3",
+            English:"It’s near public transportation",
+            Arabic:"إنه بالقرب من وسائل النقل العامة",
+            keyWord:"public transportation",    
+            Question:"What is near the house?"       
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio:"and the supermarket.mp3",
+                English:"and the supermarket.mp3",
+                Arabic:"والسوبر ماركت",   
+                Question:"What else is near the house?"        
+
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "It’s near public transportation and the supermarket.mp3",
+                English: "It’s near public transportation and the supermarket.", 
+                Arabic:"إنه بالقرب من وسائل النقل العامة والسوبر ماركت",  
+                keyWord:"public transportation, supermarket",     
+                        
+            },
+            {
+            Objective:"Objective: A student can describe his home.",
+            audio:"we also have very nice neighbors.mp3",
+            English:"We also have very nice neighbors",
+            Arabic:"لدينا أيضًا جيران لطفاء جدًا",
+            keyWord:"neighbors", 
+            Question:"What else do you have?"           
+
+            },
+            
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio: "It’s near public transportation and the supermarket.mp3",
+                English: "It’s near public transportation and the supermarket.", 
+                Arabic:"إنه بالقرب من وسائل النقل العامة والسوبر ماركت",  
+                keyWord:"public transportation, supermarket",     
+                        
+            },
+            {
+                Objective:"Objective: A student can describe his home.",
+                audio:"we also have very nice neighbors.mp3",
+            English:"We also have very nice neighbors",  
+            Arabic:"لدينا أيضًا جيران لطفاء جدًا",
+            keyWord:"neighbors",           
+
+            },
+           
+            {
+                
+            audio:"Thank you for listening.mp3",
+            English:"Thank you for listening.", 
+            Arabic:"شكرًا لاستماعك",
+            keyWord:"listening",          
+
+            },
+            {
+            audio:"Do you have any questions.mp3",
+            English:"Do you have any questions?",  
+            Arabic:"هل لديك أي أسئلة؟",
+            keyWord:"questions",         
+
+            },
+            {
+             Objective:"Objective: Students can express an opinion and agree or disagree.",
+
+            audio:"What do you want in a home.mp3",
+            English:"What do you want in a home?",
+            Arabic:"ماذا تريد في منزل؟",
+            Question:"What do you want in a home?",
+
+            },
+            {
+                audio:"I want to live in a convenient location What about you.mp3",
+                English:"I want to live in a convenient location. What about you?",
+                Arabic:"أريد أن أعيش في موقع مناسب. ماذا عنك؟",
+                keyWord:"location",
+                Question:"What do you want in a home?"
+
+            },
+            {
+                Objective:"Objective: Students can express an opinion and agree or disagree.",
+                audio:"I want to live in a convenient location What about you.mp3",
+                English:"I want to live in a convenient location. What about you?",
+                Arabic:"أريد أن أعيش في موقع مناسب. ماذا عنك؟",
+                keyWord:"location",
+
+            },
+            {
+                Objective:"Objective: Students can express an opinion and agree or disagree.",
+                audio:"I do too.mp3",
+                English:"I do too.",
+                Arabic:"أنا أيضًا",
+                keyWord:"too",
+            },
+            {
+                Objective:"Objective: Students can express an opinion and agree or disagree.",
+                audio:"I don't want to pay a lot of rent How about you.mp3",
+                English:"I don't want to pay a lot of rent. How about you?",
+                Arabic:"لا أريد دفع الكثير من الإيجار. ماذا عنك؟",
+                keyWord:"rent",
+                Question:"What do you want in a home?"
+
+            },
+            {
+                Objective:"Objective: Students can express an opinion and agree or disagree.",
+                audio:"Me neither.mp3",
+                English:"Me neither.",
+                Arabic:"أنا أيضًا لا",
+                keyWord:"neither",  
+                Question:"What do you want in a home?"
+
+            },
+            {
+                Objective:"Objective: Students can express an opinion and agree or disagree.",
+                audio:"I don't want to pay a lot of rent How about you.mp3",
+                English:"I don't want to pay a lot of rent. How about you?",
+                Arabic:"لا أريد دفع الكثير من الإيجار. ماذا عنك؟",
+                keyWord:"rent",
+                Question:"What do you want in a home?"
+
+            },
+            {
+                Objective:"Objective: Students can express an opinion and agree or disagree.",
+                audio:"I don't either.mp3",
+                English:"I don't either.",
+                Arabic:"أنا أيضًا لا",
+                keyWord:"either",  
+                Question:"What do you want in a home?"
+
+            },
+            {
+               audio:"I want a private room How about you.mp3",
+               English:"I want a private room. How about you?",
+               Arabic:"أريد غرفة خاصة. ماذا عنك؟",
+               keyWord:"private room",
+               Question:"What do you want in a home?"},
+               {
+                Objective:"Objective: Students can express an opinion and agree or disagree.",
+                audio:"I do too.mp3",
+                English:"I do too.",
+                Arabic:"أنا أيضًا",
+                keyWord:"too",
+            },
+            {
+               audio:"I want a private room How about you.mp3",
+               English:"I want a private room. How about you?",
+               Arabic:"أريد غرفة خاصة. ماذا عنك؟",
+               keyWord:"private room",
+               Question:"What do you want in a home?"},
+               {
+                Objective:"Objective: Students can express an opinion and agree or disagree.",
+                audio:"Me too.mp3",
+                English:"Me too.",
+                Arabic:"أنا أيضًا",
+                keyWord:"too",
+            },
+            {
+                Objective:"Objective: Students can express an opinion and agree or disagree.",
+                audio:"I don't want to live in a small apartment How about you.mp3",
+                English:"I don't want to live in a small apartment. How about you?",
+                Arabic:"لا أريد أن أعيش في شقة صغيرة. ماذا عنك؟",
+                keyWord:"apartment",
+                Question:"What do you want in a home?"
+
+            },
+            {
+                Objective:"Objective: Students can express an opinion and agree or disagree.",
+                audio:"I don't either.mp3",
+                English:"I don't either.",
+                Arabic:"أنا أيضًا لا",
+                keyWord:"either",  
+                Question:"What do you want in a home?"
+
+            },
+            {
+                Objective:"Objective: Students can express an opinion and agree or disagree.",
+                audio:"I don't want to live in a small apartment How about you.mp3",
+                English:"I don't want to live in a small apartment. How about you?",
+                Arabic:"لا أريد أن أعيش في شقة صغيرة. ماذا عنك؟",
+                keyWord:"apartment",
+                Question:"What do you want in a home?"
+
+            },
+             {
+                Objective:"Objective: Students can express an opinion and agree or disagree.",
+                audio:"I don't either.mp3",
+                English:"I don't either.",
+                Arabic:"أنا أيضًا لا",
+                keyWord:"either",  
+                Question:"What do you want in a home?"
+
+            },
+            {                
+                Objective:"Objective: Students can express an opinion and agree or disagree.",
+                audio:"I don't want to live in a small apartment How about you.mp3",
+                English:"I don't want to live in a small apartment. How about you?",
+                Arabic:"لا أريد أن أعيش في شقة صغيرة. ماذا عنك؟",
+                keyWord:"apartment",
+                Question:"What do you want in a home?"
+
+            },
+            {
+                Objective:"Objective: Students can express an opinion and agree or disagree.",
+                audio:"Me neither.mp3",
+                English:"Me neither.",
+                Arabic:"أنا أيضًا لا",
+                keyWord:"neither",  
+                Question:"What do you want in a home?"
+
+            },
+            {
+                Objective:"Objective: Students can express an opinion and agree or disagree.",
+                audio:"The apartment is big and expensive I want to get a roommate How about you.mp3"
+                ,English:"The apartment is big and expensive. I want to get a roommate. How about you?",
+                Arabic:"الشقة كبيرة ومكلفة. أريد الحصول على زميل سكن. ماذا عنك؟",
+                keyWord:"apartment, roommate",
+                Question:"What do you want in a home?"
+
+            },
+            {
+                Objective:"Objective: Students can express an opinion and agree or disagree.",
+                audio:"I am not sure.mp3",
+                English:"I am not sure.",
+                Arabic:"لست متأكدًا",
+                keyWord:"sure",
+                Question:"What do you want in a home?"
+
+            },
+            {
+                Objective:"Objective: Students can express an opinion and agree or disagree.",
+                audio:"The neighbors are noisy I want to move How about you.mp3",
+                English:"The neighbors are noisy. I want to move. How about you?",
+                Arabic:"الجيران صاخبون. أريد الانتقال. ماذا عنك؟",
+                keyWord:"neighbors",
+                Question:"What do you want in a home?"
+
+            },
+            {
+                Objective:"Objective: Students can express an opinion and agree or disagree.",
+                audio:"I don't know.mp3",
+                English:"I don't know.",
+                Arabic:"لا أعرف",
+                keyWord:"know",
+                Question:"What do you want in a home?"
+
+            },
+            
+
+
+
+            
+                        
+            
+
+            
+        ];
+
+        let currentAudioIndex = 0;
+
+        const propertyHandlers = {
+            Objective: (value) => `<p class="objective">${value}</p>`,
+
+            
+            keyWord: (value) => `<p  class="keyWord" >${value}</p>`,
+            Def: (value) => `<details><summary>Definition:</summary><p>${value}</p></details>`,
+            Arabic: (value) => `<p class="arabic">${value}</p>`,
+            Question: (value) => `<p>${value}</p>`,
+            
+            English: (value) => `<details><summary>Audio Script:</summary><p>${value}</p></details>`,
+           
+
+            Speaker: (value) => `<details><summary>Speaker:</summary><p>${value}</p></details>`,
+            image: (value) => `
+                <details>
+                    <summary>Show Image</summary>
+                    <img src="${value}" alt="Description of the image">
+                </details>`,
+                video: (value) => `
+        <details>
+            <summary>Show Video</summary>
+            <video controls width="300">
+                <source src="${value}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </details>`,
+        };
+
+        // Set the initial audio source before displaying data
+        const audioPlayer = document.getElementById("audioPlayer");
+        audioPlayer.src = Items[currentAudioIndex].audio;
+
+        function displayData() {
+            const slideContainer = document.querySelector(".slide");
+            slideContainer.innerHTML = ''; // Clear only the content of the slide
+            
+            const numberP = document.createElement("p");
+            numberP.textContent = `Sound Clip: ${currentAudioIndex + 1} of ${Items.length}`;
+            slideContainer.appendChild(numberP);
+
+            // Update the audio source
+            audioPlayer.src = Items[currentAudioIndex].audio;
+
+            for (const key in Items[currentAudioIndex]) {
+                const value = Items[currentAudioIndex][key];
+                if (propertyHandlers[key] && value !== undefined) {
+                    const content = propertyHandlers[key](value);
+                    if (content) {
+                        slideContainer.innerHTML += content; // Append content
+                    }
+                }
+            }
+
+            // Play the audio
+            audioPlayer.play();
+        }
+
+        function nextSlide() {
+            currentAudioIndex = (currentAudioIndex + 1) % Items.length;
+            displayData();
+        }
+
+        function previousSlide() {
+            currentAudioIndex = (currentAudioIndex - 1 + Items.length) % Items.length;
+            displayData();
+        }
+
+        function goToSlide() {
+            const input = document.getElementById("slideInput").value;
+            const index = parseInt(input) - 1; // Convert to zero-based index
+            if (index >= 0 && index < Items.length) {
+                currentAudioIndex = index;
+                displayData();
+            } else {
+                alert("Please enter a valid slide number.");
+            }
+        }
+        document.addEventListener('keydown', (e) => {
+            const selectedText = document.getSelection().toString();
+            // Check if the active element is not the input field
+            if (document.activeElement.tagName !== 'INPUT' && selectedText) {
+                if (e.key === "s") {
+                    utterance.text = selectedText;
+                    speechSynthesis.speak(utterance);
+                }
+            } 
+        });
+
+
+        // Initial display
+        displayData();
+    </script>
+</body>
+</html>
